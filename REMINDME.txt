@@ -1,0 +1,87 @@
+PROMISE TRACKER - WHAT WE NEED WORKING
+=======================================
+Tracks: General/Beginner + Photon iMessage + Gemini API (+ Community, .Tech, Commit Fellowship)
+Pitch: texts the bot a screenshot/message -> it pulls out who promised what -> reminds them.
+
+[x] = done   [ ] = todo   [?] = needs testing
+
+
+0. PHOTON SETUP (done)
+----------------------
+[x] Pro plan via code HACKNC
+[x] .env has SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, MY_PHONE (never commit .env)
+[x] Bot receives DMs     -> bot/testsuite/spectrum_read_test.mts
+[x] Bot can text first   -> bot/testsuite/spectrum_hello_test.mts
+    Bot number (for +12524842709): +16282647704
+    Shared pool: every person must be added under Dashboard > Users first,
+    and each person may get a DIFFERENT bot number ("texts on").
+
+
+1. OPEN QUESTIONS (test these first)
+------------------------------------
+[?] Group chats on Pro: make a group (you + 2 registered teammates + bot),
+    run read test, check every member's messages arrive with type 'group'.
+[?] Screenshots: send the bot an image while read test runs, see how the
+    attachment shows up and whether we can get the image bytes for Gemini.
+[?] Ask Photon reps: dedicated line for hackathon teams? (fixes groups + one number)
+
+
+2. CORE LOOP (MUST HAVE - the demo)   -> bot/   run: npm run bot
+-----------------------------------
+[x] bot/index.ts      loop over app.messages, commands, else extract
+[x] bot/history.ts    last 15 messages per chat (memory) as Gemini context
+[x] bot/extractor.ts  Gemini structured JSON: new promises in the LAST message
+                      + ids of tracked promises it marks done ("sent it!")
+[x] bot/store.ts      data/promises.json (gitignored)
+[x] bot/reminders.ts  every 30s, one "⏰" message in the original chat when due
+[x] Bot replies "📌 <who> → <what> (due <when>)" / "✅ Done: ..."
+[ ] Add GEMINI_API_KEY to .env, then: npm run test:extractor
+[ ] Tune the prompt in bot/extractor.ts against more test cases
+[ ] Try it live in a DM, then in a group
+    Demo tip: say "...in 2 minutes" so a reminder fires during judging
+
+
+3. COMMANDS (SHOULD HAVE)
+-------------------------
+[x] "list"    -> open promises in this chat
+[x] "done 2"  -> mark #2 complete (Gemini also catches "ok sent it")
+[ ] "snooze"  -> push the deadline
+[ ] Reminder by private DM to promisorPhone instead of in the group
+
+
+4. NICE TO HAVE (only if 2 + 3 work)
+------------------------------------
+[ ] Screenshot input (Gemini reads the image) - big for the Gemini track
+[ ] "Remind Jordan too?" -> bot texts the other person (they must be a registered user)
+[ ] Group chat mode (if test in section 1 passes)
+[ ] Signup page: enter phone -> server adds them as a Photon user ->
+    "Open in iMessage" sms: link with pre-filled text -> bot sends welcome + contact card
+    (user texting first avoids iPhone's "Report Junk" banner)
+[ ] Dashboard view of promises (the React app in src/)
+[ ] Weekly "promise report card"
+
+
+5. DEMO + SUBMISSION
+--------------------
+[ ] Add judges' numbers under Users before/during demo (backup: do it by hand in dashboard)
+[ ] Have a demo screenshot ready on a phone
+[ ] Laptop running the bot stays awake on wifi (or deploy: Railway/Render/Fly)
+[ ] Register a .tech domain
+[ ] Devpost: pick General or Beginner + Photon + Gemini + Community + .Tech + Commit Fellowship
+[ ] Commit Fellowship supplemental form
+
+
+CUT ORDER IF RUNNING OUT OF TIME
+--------------------------------
+dashboard -> signup page -> report card -> group mode -> snooze -> screenshots
+Never cut: message in -> Gemini -> saved -> reminder out.
+
+
+RUN COMMANDS
+------------
+npm run bot              (the real bot)
+npm run test:extractor   (Gemini on fake chats, no phone needed)
+npm run typecheck:bot
+npm run dev              (frontend)
+node --env-file=.env bot/testsuite/spectrum_read_test.mts    (log incoming messages)
+node --env-file=.env bot/testsuite/spectrum_hello_test.mts   (bot texts MY_PHONE)
