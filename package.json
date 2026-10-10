@@ -11,7 +11,9 @@
     "bot": "node --env-file=.env bot/index.ts",
     "test:extractor": "node --env-file=.env server/testsuite/extractor_test.ts",
     "server": "node --env-file=.env server/index.ts",
-    "typecheck:server": "tsc -p tsconfig.server.json"
+    "typecheck:server": "tsc -p tsconfig.server.json",
+    "emulate": "npm --prefix functions run build && npm run build && npx -y firebase-tools@15 emulators:start --only functions,hosting --project demo-promise-tracker",
+    "deploy": "npx -y firebase-tools@15 deploy"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",

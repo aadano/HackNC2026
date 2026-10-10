@@ -41,3 +41,7 @@ Desktop.ini
 *.tsbuildinfo
 # Bot data
 data/
+
+# Firebase
+firebase-debug.log*
+.firebase/

@@ -11,6 +11,24 @@ npm run server   # API on http://localhost:3001 (needs GEMINI_API_KEY in .env)
 npm run dev      # website; Vite forwards /api/* to the server
 ```
 
+## Deploy to Firebase
+
+The website goes on Firebase Hosting and this API runs as a Cloud Function called `api`.
+Hosting forwards `/api/**` to it (see `firebase.json`), so the website always calls `/api/extract`.
+
+One-time setup:
+1. Firebase console: create a project (or use the team one) and upgrade it to the **Blaze** plan.
+2. `npx firebase-tools@15 login`
+3. `npx firebase-tools@15 use --add` → pick the project (creates `.firebaserc`; commit it).
+4. Put the key in `functions/.env` (gitignored): `GEMINI_API_KEY=...`
+
+Then, from the repo root:
+
+```
+npm run deploy    # builds website + function, uploads both
+npm run emulate   # same setup on your machine at http://127.0.0.1:5000, no login needed
+```
+
 ## `POST /api/extract`
 
 Send `text`, `image`, or both:
@@ -84,7 +102,9 @@ export function saveDraft(draft: PromiseDraft, existing: TrackedPromise[]): Trac
 
 ## Files
 
-- `index.ts` – HTTP server and request validation
+- `extract.ts` – the /api/extract logic (input checks → Gemini → drafts), shared by both servers below
+- `index.ts` – local dev server (`npm run server`)
+- `../functions/src/index.ts` – the same endpoint as a Firebase Cloud Function
 - `playground.html` – dev page served at `/` for trying the endpoint
 - `gemini.ts` – prompts, JSON schemas, Gemini calls (also used by the iMessage bot in `bot/`)
 - `config.ts` – model, timezone, confidence threshold, port
