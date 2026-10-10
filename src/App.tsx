@@ -14,7 +14,7 @@ const samplePromises: TrackedPromise[] = [
     promisorPhone: null,
     spaceId: "sample",
     remindedAt: null,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(), // get the current time in ms, add 24hrs to it, then convert to string
   },
   {
     id: "2",
@@ -40,10 +40,24 @@ const samplePromises: TrackedPromise[] = [
     remindedAt: null,
     createdAt: new Date().toISOString(),
   },
+  {
+    id: "4",
+    description: "Share the project slides",
+    promisor: "You",
+    deadline: new Date(Date.now() + 899500000).toISOString(),
+    status: "pending",
+    sourceText: "I'll share the slides with everyone.",
+    promisorPhone: null,
+    spaceId: "sample",
+    remindedAt: null,
+    createdAt: new Date().toISOString(),
+  },
 ];
 
+// defines the values the filter is allowed to have.
 type Filter = "all" | PromiseStatus | "overdue";
 
+// takes a promise and returns true if conditions met
 function isOverdue(promise: TrackedPromise): boolean {
   return (
     promise.status === "pending" &&
@@ -53,18 +67,31 @@ function isOverdue(promise: TrackedPromise): boolean {
 }
 
 function App() {
-  const [promises, setPromises] = useState<TrackedPromise[]>(samplePromises);
-  const [filter, setFilter] = useState<Filter>("all");
+  //useState to allow React to remember information that can change while app runs.
+  const [promises, setPromises] = useState<TrackedPromise[]>(samplePromises); // initial values
+  const [filter, setFilter] = useState<Filter>("all"); // initial selection
 
-  const visiblePromises = promises.filter((promise) => {
+  // creates new array matching the selected filter only
+  const visiblePromises = promises.filter((promise) => { // filters each promise
     if (filter === "all") return true;
     if (filter === "overdue") return isOverdue(promise);
-    return promise.status === filter;
+    return promise.status === filter; // only runs when filter is neither all nor overdue
   });
+
+  // sort promises based on priority
+  const sortedPromises = [...visiblePromises].sort((a, b) => {
+  // Promises without deadlines go to the bottom
+  if (a.deadline === null) return 1;
+  if (b.deadline === null) return -1;
+
+  // Earlier deadlines come first
+  return new Date(a.deadline).getTime() -
+         new Date(b.deadline).getTime();
+});
 
   function completePromise(id: string) {
     setPromises((current) =>
-      current.map((promise) =>
+      current.map((promise) => // check id, change to complete if id matches, update it
         promise.id === id ? { ...promise, status: "completed" } : promise,
       ),
     );
@@ -116,7 +143,7 @@ function App() {
         </div>
 
         <div className="promise-list">
-          {visiblePromises.map((promise) => (
+          {sortedPromises.map((promise) => (
             <article className="promise-card" key={promise.id}>
               <div className="promise-info">
                 <h3>{promise.description}</h3>
