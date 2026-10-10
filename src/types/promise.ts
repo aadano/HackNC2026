@@ -16,5 +16,13 @@ export interface TrackedPromise {
   createdAt: string;
 }
 
+export interface NewPromise {
+  promisorPhone: string | null;
+  promisorName: string;
+  description: string;
+  deadline: string | null;
+  confidence: number;
+}
+
 // Returned by POST /api/extract. Gets an id when the website saves it.
 export type PromiseDraft = Omit<TrackedPromise, "id"> & { id: null };
