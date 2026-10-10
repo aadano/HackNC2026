@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { GoogleGenAI, type Part } from "@google/genai";
 import type { PromiseDraft, TrackedPromise } from "../src/types/promise.ts";
 import { isValidDate } from "../src/utils/dateUtils.ts";
-import { GEMINI_MODEL, MIN_CONFIDENCE, TIMEZONE } from "./config.ts";
+import { GEMINI_MODEL, MIN_CONFIDENCE, TIMEZONE, UNKNOWN_PROMISOR } from "./config.ts";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -54,7 +54,10 @@ In screenshots, messages on the right are from the user: call them "You". The ot
 If messages show their own dates or times, resolve deadlines from those; otherwise from the current time.
 
 ${PROMISE_RULES}
-  - promisorPhone: always null.`;
+  - promisorPhone: always null.
+  - promisorName here: the user (right-side bubbles, or lines labeled "Me"/"I"/"You") is "You".
+    Otherwise use a name shown in the conversation. If you can't tell who made the promise,
+    use exactly "${UNKNOWN_PROMISOR}". Never invent names or labels like "Them", "Other" or "Speaker 1".`;
 
 const PROMISE_ITEM = {
   type: "object",

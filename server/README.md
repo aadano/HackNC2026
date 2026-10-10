@@ -42,7 +42,8 @@ Response `200`:
 ```
 
 - `id` is always `null`: these are drafts. The website gives each one an id when the user saves it.
-- `promisor` is a name from the conversation, or `"You"` for the user (right-side bubbles in screenshots).
+- `promisor` is a name from the conversation, `"You"` for the user (right-side bubbles in screenshots),
+  or `"Unknown"` if Gemini can't tell who promised. The review step is a good place to let the user fill that in.
 - `deadline` is ISO 8601 or `null`. `sourceText` is `"(screenshot)"` for images.
 - Vague stuff ("we should hang out sometime") and low-confidence guesses are left out, so `promises` can be `[]`.
 - Errors: `400` bad input, `413` body over 15 MB, `500` Gemini failed. Body is `{ "error": "..." }`.
