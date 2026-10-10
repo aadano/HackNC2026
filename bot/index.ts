@@ -1,10 +1,9 @@
-import { randomUUID } from "node:crypto";
 import { Spectrum, type Space } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
+import { TIMEZONE } from "../server/config.ts";
+import { extract, toTrackedPromises } from "../server/gemini.ts";
 import type { TrackedPromise } from "../src/types/promise.ts";
-import { formatDeadline, isValidDate } from "../src/utils/dateUtils.ts";
-import { MIN_CONFIDENCE, TIMEZONE } from "./config.ts";
-import { extract } from "./extractor.ts";
+import { formatDeadline } from "../src/utils/dateUtils.ts";
 import { remember } from "./history.ts";
 import { startReminders } from "./reminders.ts";
 import { addPromise, pendingInSpace, setStatus } from "./store.ts";
@@ -97,20 +96,7 @@ async function trackPromises(space: Space, sender: string, text: string): Promis
     changed = true;
   }
 
-  for (const np of result.newPromises) {
-    if (np.confidence < MIN_CONFIDENCE) continue;
-    const p: TrackedPromise = {
-      id: randomUUID(),
-      description: np.description,
-      promisor: np.promisorName,
-      promisorPhone: np.promisorPhone,
-      deadline: isValidDate(np.deadline) ? np.deadline : null,
-      status: "pending",
-      sourceText: text,
-      spaceId: space.id,
-      remindedAt: null,
-      createdAt: new Date().toISOString(),
-    };
+  for (const p of toTrackedPromises(result.newPromises, space.id, text)) {
     addPromise(p);
     await space.send(`📌 ${describe(p)}`);
     changed = true;

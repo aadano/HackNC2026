@@ -11,5 +11,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts"]
+  "include": ["server/**/*.ts", "bot/**/*.ts"]
 }

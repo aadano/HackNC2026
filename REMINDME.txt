@@ -30,13 +30,13 @@ Pitch: texts the bot a screenshot/message -> it pulls out who promised what -> r
 -----------------------------------
 [x] bot/index.ts      loop over app.messages, commands, else extract
 [x] bot/history.ts    last 15 messages per chat (memory) as Gemini context
-[x] bot/extractor.ts  Gemini structured JSON: new promises in the LAST message
+[x] server/gemini.ts Gemini structured JSON: new promises in the LAST message
                       + ids of tracked promises it marks done ("sent it!")
 [x] bot/store.ts      data/promises.json (gitignored)
 [x] bot/reminders.ts  every 30s, one "⏰" message in the original chat when due
 [x] Bot replies "📌 <who> → <what> (due <when>)" / "✅ Done: ..."
-[ ] Add GEMINI_API_KEY to .env, then: npm run test:extractor
-[ ] Tune the prompt in bot/extractor.ts against more test cases
+[x] Add GEMINI_API_KEY to .env, then: npm run test:extractor
+[ ] Tune the prompts in server/gemini.ts against more test cases
 [ ] Try it live in a DM, then in a group
     Demo tip: say "...in 2 minutes" so a reminder fires during judging
 
@@ -79,9 +79,10 @@ Never cut: message in -> Gemini -> saved -> reminder out.
 
 RUN COMMANDS
 ------------
-npm run bot              (the real bot)
+npm run server           (Gemini API for the website, see server/README.md)
+npm run bot              (iMessage bot, on the side for now)
 npm run test:extractor   (Gemini on fake chats, no phone needed)
-npm run typecheck:bot
+npm run typecheck:server (server + bot)
 npm run dev              (frontend)
 node --env-file=.env bot/testsuite/spectrum_read_test.mts    (log incoming messages)
 node --env-file=.env bot/testsuite/spectrum_hello_test.mts   (bot texts MY_PHONE)
