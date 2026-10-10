@@ -12,7 +12,7 @@ Pitch: texts the bot a screenshot/message -> it pulls out who promised what -> r
 [x] .env has SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, MY_PHONE (never commit .env)
 [x] Bot receives DMs     -> bot/testsuite/spectrum_read_test.mts
 [x] Bot can text first   -> bot/testsuite/spectrum_hello_test.mts
-    Bot number (for +12524842709): +16282647704
+    Bot number (for aadano's phone): +16282647704
     Shared pool: every person must be added under Dashboard > Users first,
     and each person may get a DIFFERENT bot number ("texts on").
 
