@@ -1,9 +1,12 @@
+import { readFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { MAX_BODY_BYTES, PORT } from "./config.ts";
 import { extractFromConversation, toTrackedPromises, type ConversationInput } from "./gemini.ts";
 
 // Promises found by /api/extract aren't saved anywhere; the website decides what to keep.
 const WEB_SPACE_ID = "web";
+// Dev page at http://localhost:3001/ for trying the endpoint by hand.
+const PLAYGROUND_HTML = readFileSync(new URL("./playground.html", import.meta.url));
 
 // POST /api/extract
 //   body:  { "text": "pasted chat..." }  and/or  { "image": "data:image/png;base64,..." }
@@ -19,13 +22,17 @@ createServer(async (req, res) => {
       const promises = toTrackedPromises(found, WEB_SPACE_ID, input.text ?? "(screenshot)");
       return sendJson(res, 200, { promises });
     }
+    if (req.method === "GET" && req.url === "/") {
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      return res.end(PLAYGROUND_HTML);
+    }
     sendJson(res, 404, { error: "Not found" });
   } catch (err) {
     console.error("Request failed:", err);
     sendJson(res, err instanceof BodyTooLargeError ? 413 : 500, { error: (err as Error).message });
   }
 }).listen(PORT, "127.0.0.1", () => {
-  console.log(`Gemini API listening on http://localhost:${PORT}/api/extract`);
+  console.log(`Gemini API on http://localhost:${PORT}/api/extract (try it at http://localhost:${PORT}/)`);
 });
 
 function parseInput(body: unknown): ConversationInput | null {

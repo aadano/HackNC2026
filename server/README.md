@@ -7,6 +7,7 @@ Turns pasted chat text or a chat screenshot into `TrackedPromise` JSON
 
 ```
 npm run server   # API on http://localhost:3001 (needs GEMINI_API_KEY in .env)
+                 # open http://localhost:3001/ to try it by hand (paste text or a screenshot)
 npm run dev      # website; Vite forwards /api/* to the server
 ```
 
@@ -75,6 +76,7 @@ export function fileToDataUrl(file: File): Promise<string> {
 ## Files
 
 - `index.ts` – HTTP server and request validation
+- `playground.html` – dev page served at `/` for trying the endpoint
 - `gemini.ts` – prompts, JSON schemas, Gemini calls (also used by the iMessage bot in `bot/`)
 - `config.ts` – model, timezone, confidence threshold, port
 - `testsuite/extractor_test.ts` – `npm run test:extractor`, runs Gemini on sample chats

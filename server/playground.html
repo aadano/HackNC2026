@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extract Playground</title>
+<style>
+  :root { --bg: #f6f7f9; --card: #fff; --text: #1d1f23; --muted: #6b7280; --line: #dfe2e7; --accent: #2563eb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #15171a; --card: #1e2125; --text: #e8eaed; --muted: #9aa0a6; --line: #33373d; --accent: #60a5fa; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.hint { color: var(--muted); margin: 0 0 20px; }
+  textarea { width: 100%; min-height: 140px; padding: 12px; border: 1px solid var(--line); border-radius: 8px;
+             background: var(--card); color: var(--text); font: inherit; resize: vertical; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0 20px; }
+  button { padding: 9px 18px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: wait; }
+  button.secondary { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  #preview { display: none; max-width: 100%; max-height: 260px; border: 1px solid var(--line); border-radius: 8px; margin-top: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  .card strong { display: block; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .error { color: #dc2626; }
+  details { margin-top: 16px; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Extract Playground</h1>
+  <p class="hint">Paste a conversation, choose a screenshot, or press Ctrl+V to paste an image. Calls <code>POST /api/extract</code>.</p>
+
+  <textarea id="text" placeholder="Jordan: can you send the notes?&#10;You: yeah I'll send them tonight"></textarea>
+  <img id="preview" alt="Screenshot to send">
+
+  <div class="row">
+    <input type="file" id="file" accept="image/*">
+    <button class="secondary" id="clear">Clear</button>
+    <button id="go">Extract promises</button>
+  </div>
+
+  <div id="results"></div>
+  <details><summary>Raw JSON</summary><pre id="raw">(nothing yet)</pre></details>
+</main>
+<script>
+  const $ = (id) => document.getElementById(id);
+  let image = null;
+
+  function setImage(file) {
+    const reader = new FileReader();
+    reader.onload = () => { image = reader.result; $("preview").src = image; $("preview").style.display = "block"; };
+    reader.readAsDataURL(file);
+  }
+
+  $("file").addEventListener("change", (e) => e.target.files[0] && setImage(e.target.files[0]));
+  document.addEventListener("paste", (e) => {
+    const item = [...e.clipboardData.items].find((i) => i.type.startsWith("image/"));
+    if (item) { e.preventDefault(); setImage(item.getAsFile()); }
+  });
+  $("clear").addEventListener("click", () => {
+    image = null; $("file").value = ""; $("text").value = ""; $("preview").style.display = "none";
+    $("results").textContent = ""; $("raw").textContent = "(nothing yet)";
+  });
+
+  $("go").addEventListener("click", async () => {
+    const body = {};
+    if ($("text").value.trim()) body.text = $("text").value;
+    if (image) body.image = image;
+    $("go").disabled = true;
+    $("results").textContent = "Asking Gemini…";
+    try {
+      const res = await fetch("/api/extract", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await res.json();
+      $("raw").textContent = JSON.stringify(data, null, 2);
+      render(res.ok ? data.promises : null, data.error);
+    } catch (err) {
+      render(null, err.message);
+    } finally {
+      $("go").disabled = false;
+    }
+  });
+
+  function render(promises, error) {
+    const out = $("results");
+    out.textContent = "";
+    if (error) { out.innerHTML = '<p class="error"></p>'; out.firstChild.textContent = error; return; }
+    if (!promises.length) { out.textContent = "No promises found."; return; }
+    for (const p of promises) {
+      const card = document.createElement("div");
+      card.className = "card";
+      const due = p.deadline ? new Date(p.deadline).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "no deadline";
+      card.innerHTML = "<strong></strong><span class='meta'></span>";
+      card.querySelector("strong").textContent = p.description;
+      card.querySelector(".meta").textContent = `${p.promisor} · ${due}`;
+      out.append(card);
+    }
+  }
+</script>
+</body>
+</html>
