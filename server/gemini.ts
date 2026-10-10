@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { GoogleGenAI, type Part } from "@google/genai";
-import type { TrackedPromise } from "../src/types/promise.ts";
+import type { PromiseDraft, TrackedPromise } from "../src/types/promise.ts";
 import { isValidDate } from "../src/utils/dateUtils.ts";
 import { GEMINI_MODEL, MIN_CONFIDENCE, TIMEZONE } from "./config.ts";
 
@@ -120,12 +120,12 @@ export async function extractFromConversation(input: ConversationInput): Promise
   return result.promises;
 }
 
-// Drops low-confidence results and turns the rest into unsaved TrackedPromises.
-export function toTrackedPromises(found: NewPromise[], spaceId: string, sourceText: string): TrackedPromise[] {
+// Drops low-confidence results and turns the rest into drafts with no id yet.
+export function toDrafts(found: NewPromise[], spaceId: string, sourceText: string): PromiseDraft[] {
   return found
     .filter((np) => np.confidence >= MIN_CONFIDENCE)
     .map((np) => ({
-      id: randomUUID(),
+      id: null,
       description: np.description,
       promisor: np.promisorName,
       promisorPhone: np.promisorPhone,
@@ -136,4 +136,9 @@ export function toTrackedPromises(found: NewPromise[], spaceId: string, sourceTe
       remindedAt: null,
       createdAt: new Date().toISOString(),
     }));
+}
+
+// The bot saves straight away, so it gives each draft a unique id.
+export function toTrackedPromises(found: NewPromise[], spaceId: string, sourceText: string): TrackedPromise[] {
+  return toDrafts(found, spaceId, sourceText).map((draft) => ({ ...draft, id: randomUUID() }));
 }

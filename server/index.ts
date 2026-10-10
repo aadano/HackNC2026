@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { MAX_BODY_BYTES, PORT } from "./config.ts";
-import { extractFromConversation, toTrackedPromises, type ConversationInput } from "./gemini.ts";
+import { extractFromConversation, toDrafts, type ConversationInput } from "./gemini.ts";
 
 // Promises found by /api/extract aren't saved anywhere; the website decides what to keep.
 const WEB_SPACE_ID = "web";
@@ -10,7 +10,7 @@ const PLAYGROUND_HTML = readFileSync(new URL("./playground.html", import.meta.ur
 
 // POST /api/extract
 //   body:  { "text": "pasted chat..." }  and/or  { "image": "data:image/png;base64,..." }
-//   200:   { "promises": TrackedPromise[] }
+//   200:   { "promises": PromiseDraft[] }  (id is null until the website saves it)
 //   4xx/5xx: { "error": "..." }
 createServer(async (req, res) => {
   try {
@@ -19,7 +19,7 @@ createServer(async (req, res) => {
       if (!input) return sendJson(res, 400, { error: 'Send "text" and/or "image" (a base64 data URL).' });
 
       const found = await extractFromConversation(input);
-      const promises = toTrackedPromises(found, WEB_SPACE_ID, input.text ?? "(screenshot)");
+      const promises = toDrafts(found, WEB_SPACE_ID, input.text ?? "(screenshot)");
       return sendJson(res, 200, { promises });
     }
     if (req.method === "GET" && req.url === "/") {

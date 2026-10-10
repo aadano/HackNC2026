@@ -1,6 +1,6 @@
 # Gemini API
 
-Turns pasted chat text or a chat screenshot into `TrackedPromise` JSON
+Turns pasted chat text or a chat screenshot into `PromiseDraft` JSON
 (see `src/types/promise.ts`). Stateless: nothing is saved, the website decides what to keep.
 
 ## Run
@@ -26,7 +26,7 @@ Response `200`:
 {
   "promises": [
     {
-      "id": "6f1c…",
+      "id": null,
       "description": "send the report",
       "promisor": "You",
       "promisorPhone": null,
@@ -41,6 +41,7 @@ Response `200`:
 }
 ```
 
+- `id` is always `null`: these are drafts. The website gives each one an id when the user saves it.
 - `promisor` is a name from the conversation, or `"You"` for the user (right-side bubbles in screenshots).
 - `deadline` is ISO 8601 or `null`. `sourceText` is `"(screenshot)"` for images.
 - Vague stuff ("we should hang out sometime") and low-confidence guesses are left out, so `promises` can be `[]`.
@@ -49,9 +50,9 @@ Response `200`:
 ## Calling it from React
 
 ```ts
-import type { TrackedPromise } from "./types/promise";
+import type { PromiseDraft, TrackedPromise } from "./types/promise";
 
-export async function extractPromises(input: { text?: string; image?: string }): Promise<TrackedPromise[]> {
+export async function extractPromises(input: { text?: string; image?: string }): Promise<PromiseDraft[]> {
   const res = await fetch("/api/extract", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -70,6 +71,13 @@ export function fileToDataUrl(file: File): Promise<string> {
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(file);
   });
+}
+
+// When the user confirms a draft, number it after the highest existing id
+// (not the list length, so deleting #2 can't make two promises share an id).
+export function saveDraft(draft: PromiseDraft, existing: TrackedPromise[]): TrackedPromise {
+  const highest = Math.max(0, ...existing.map((p) => Number(p.id) || 0));
+  return { ...draft, id: String(highest + 1) };
 }
 ```
 

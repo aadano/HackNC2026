@@ -15,3 +15,6 @@ export interface TrackedPromise {
   remindedAt: string | null;
   createdAt: string;
 }
+
+// Returned by POST /api/extract. Gets an id when the website saves it.
+export type PromiseDraft = Omit<TrackedPromise, "id"> & { id: null };
