@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { TrackedPromise, PromiseStatus } from "./types/promise";
 import "./App.css";
 
+// sample data
 const samplePromises: TrackedPromise[] = [
   {
     id: "1",
