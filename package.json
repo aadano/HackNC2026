@@ -7,23 +7,29 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "bot": "node --env-file=.env bot/index.ts",
+    "typecheck:bot": "tsc -p bot",
+    "test:extractor": "node --env-file=.env bot/testsuite/extractor_test.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.28.0",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "spectrum-ts": "^12.10.1",
+    "typescript": "latest",
+    "vite": "latest"
   },
   "devDependencies": {
-    "eslint": "latest",
-    "typescript-eslint": "latest",
-    "eslint-plugin-react-hooks": "latest",
-    "eslint-plugin-react-refresh": "latest",
+    "@eslint/js": "latest",
+    "@types/node": "^26.6.5",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@eslint/js": "latest",
-    "globals": "latest"
+    "eslint": "latest",
+    "eslint-plugin-react-hooks": "latest",
+    "eslint-plugin-react-refresh": "latest",
+    "globals": "latest",
+    "typescript-eslint": "latest"
   }
 }

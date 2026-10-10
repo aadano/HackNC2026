@@ -11,6 +11,9 @@ const samplePromises: TrackedPromise[] = [
     deadline: new Date(Date.now() + 86400000).toISOString(),
     status: "pending",
     sourceText: "I'll send you the lecture notes tomorrow.",
+    promisorPhone: null,
+    spaceId: "sample",
+    remindedAt: null,
     createdAt: new Date().toISOString(),
   },
   {
@@ -20,6 +23,9 @@ const samplePromises: TrackedPromise[] = [
     deadline: new Date(Date.now() - 86400000).toISOString(),
     status: "pending",
     sourceText: "I'll return your book by yesterday.",
+    promisorPhone: null,
+    spaceId: "sample",
+    remindedAt: null,
     createdAt: new Date().toISOString(),
   },
   {
@@ -29,6 +35,9 @@ const samplePromises: TrackedPromise[] = [
     deadline: null,
     status: "completed",
     sourceText: "I'll share the slides with everyone.",
+    promisorPhone: null,
+    spaceId: "sample",
+    remindedAt: null,
     createdAt: new Date().toISOString(),
   },
 ];
