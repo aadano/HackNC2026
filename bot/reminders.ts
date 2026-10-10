@@ -1,5 +1,6 @@
 import { formatDeadline } from "../src/utils/dateUtils.ts";
-import { REMINDER_CHECK_MS, TIMEZONE } from "./config.ts";
+import { TIMEZONE } from "../server/config.ts";
+import { REMINDER_CHECK_MS } from "./config.ts";
 import { dueForReminder, markReminded } from "./store.ts";
 
 export type SendToSpace = (spaceId: string, text: string) => Promise<void>;

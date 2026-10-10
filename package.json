@@ -9,8 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "bot": "node --env-file=.env bot/index.ts",
-    "typecheck:bot": "tsc -p bot",
-    "test:extractor": "node --env-file=.env bot/testsuite/extractor_test.ts"
+    "test:extractor": "node --env-file=.env server/testsuite/extractor_test.ts",
+    "server": "node --env-file=.env server/index.ts",
+    "typecheck:server": "tsc -p tsconfig.server.json"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",
