@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TrackedPromise, PromiseStatus } from "./types/promise";
+import { SignIn } from "./components/SignIn";
+import { useAuthUser } from "./services/auth";
+import { completePromise as completeSavedPromise, watchPromises } from "./services/promises";
 import "./App.css";
 
 
@@ -19,7 +22,17 @@ function App() {
   //useState to allow React to remember information that can change while app runs.
   const [promises, setPromises] = useState<TrackedPromise[]>([]); // emptylist initially
   const [filter, setFilter] = useState<Filter>("all"); // initial selection
-  
+  const { user, loading } = useAuthUser(); // signed-in Firebase user, or null
+
+  // Live list of the signed-in user's promises from Firestore; empty when signed out.
+  useEffect(() => {
+    if (!user) {
+      setPromises([]);
+      return;
+    }
+    return watchPromises(user.uid, setPromises);
+  }, [user]);
+
 
   // creates new array matching the selected filter only
   const visiblePromises = promises.filter((promise) => {
@@ -50,13 +63,10 @@ function App() {
     return 0;
   });
 
+  // Saves to Firestore; the live list above picks up the change.
   function completePromise(id: string) {
-    setPromises((current) =>
-      current.map((promise) =>
-        // check id, change to complete if id matches, update it
-        promise.id === id ? { ...promise, status: "completed" } : promise,
-      ),
-    );
+    if (!user) return;
+    completeSavedPromise(user.uid, id).catch(console.error);
   }
 
 
@@ -67,6 +77,7 @@ function App() {
           <p className="eyebrow">YOUR COMMITMENTS, IN ONE PLACE</p>
           <h1>Promise Tracker</h1>
           <p className="subtitle">Keep track of what people said they'd do.</p>
+          {!loading && <SignIn user={user} />}
         </div>
       </header>
 
@@ -141,7 +152,9 @@ function App() {
 
           {visiblePromises.length === 0 && (
             <p className="empty-state">
-              Nothing here yet. A little breathing room for your promises.
+              {user
+                ? "Nothing here yet. A little breathing room for your promises."
+                : "Sign in to see your promises."}
             </p>
           )}
         </div>
