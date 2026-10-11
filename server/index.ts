@@ -8,10 +8,18 @@ import { handleExtract } from "./extract.ts";
 // Dev page at http://localhost:3001/ for trying the endpoint by hand.
 const PLAYGROUND_HTML = readFileSync(new URL("./playground.html", import.meta.url));
 
+if (!process.env.GEMINI_API_KEY) {
+  console.error("GEMINI_API_KEY is missing. Add it to .env in the repo root (next to package.json), then restart.");
+  process.exit(1);
+}
+
 createServer(async (req, res) => {
   try {
     if (req.method === "POST" && req.url === "/api/extract") {
+      const started = Date.now();
+      console.log("→ POST /api/extract");
       const result = await handleExtract(await readJson(req));
+      console.log(`← ${result.status} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
       return sendJson(res, result.status, result.body);
     }
     if (req.method === "GET" && req.url === "/") {

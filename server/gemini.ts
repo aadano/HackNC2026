@@ -2,9 +2,12 @@ import { randomUUID } from "node:crypto";
 import { GoogleGenAI, type Part } from "@google/genai";
 import type { PromiseDraft, TrackedPromise } from "../src/types/promise.ts";
 import { isValidDate } from "../src/utils/dateUtils.ts";
-import { GEMINI_MODEL, MIN_CONFIDENCE, TIMEZONE, UNKNOWN_PROMISOR } from "./config.ts";
+import { GEMINI_MODEL, GEMINI_TIMEOUT_MS, MIN_CONFIDENCE, TIMEZONE, UNKNOWN_PROMISOR } from "./config.ts";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+  httpOptions: { timeout: GEMINI_TIMEOUT_MS },
+});
 
 export interface ChatLine {
   sender: string;

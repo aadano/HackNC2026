@@ -13,6 +13,11 @@ export interface ExtractResult {
 //   200:   { "promises": PromiseDraft[] }  (id is null until the website saves it)
 //   400:   { "error": "..." }
 export async function handleExtract(body: unknown): Promise<ExtractResult> {
+  // Without a key the Gemini SDK silently hunts for Google Cloud credentials and can hang.
+  if (!process.env.GEMINI_API_KEY) {
+    return { status: 500, body: { error: "Server is missing GEMINI_API_KEY (.env locally, functions/.env when deployed)." } };
+  }
+
   const input = parseInput(body);
   if (!input) return { status: 400, body: { error: 'Send "text" and/or "image" (a base64 data URL).' } };
 

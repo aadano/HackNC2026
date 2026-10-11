@@ -7,6 +7,9 @@ export const MIN_CONFIDENCE = 0.7;
 // promisor when Gemini can't tell who made a promise from a pasted chat or screenshot.
 export const UNKNOWN_PROMISOR = "Unknown";
 
+// Give up on a Gemini call after this long instead of leaving the website spinning.
+export const GEMINI_TIMEOUT_MS = 60_000;
+
 export const PORT = Number(process.env.PORT ?? 3001);
 // Room for a base64-encoded phone screenshot.
 export const MAX_BODY_BYTES = 15 * 1024 * 1024;
