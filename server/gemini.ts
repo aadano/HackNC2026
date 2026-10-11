@@ -34,7 +34,10 @@ export interface ConversationInput {
 
 const PROMISE_RULES = `A promise is a concrete commitment by someone to do something:
   yes: "I'll send it tonight", "I got it" (replying to a request), "I can drive Saturday", "let me handle that"
-  no:  "we should hang out sometime", "maybe I'll come", questions, things already done, sarcasm, jokes
+  yes: a specific plan someone proposes with a day or time, even if nobody has replied yet:
+       "let's get lunch tomorrow at noon", "dinner at grandma's sunday 6pm". The promisor is whoever proposed it.
+  no:  vague plans with no day or time ("we should hang out sometime", "maybe we can grab coffee"),
+       "maybe I'll come", questions, things already done, sarcasm, jokes
 
 For each promise:
   - promisorName: a short name. Use the phone number if no name is known.
@@ -100,7 +103,8 @@ async function generate<T>(systemInstruction: string, contents: Part[], schema: 
   const res = await ai.models.generateContent({
     model: GEMINI_MODEL,
     contents,
-    config: { systemInstruction, responseMimeType: "application/json", responseJsonSchema: schema },
+    // temperature 0: the same conversation gives the same promises every time.
+    config: { systemInstruction, temperature: 0, responseMimeType: "application/json", responseJsonSchema: schema },
   });
   if (!res.text) throw new Error("Gemini returned an empty response");
   return JSON.parse(res.text);

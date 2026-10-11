@@ -19,7 +19,11 @@ createServer(async (req, res) => {
       const started = Date.now();
       console.log("→ POST /api/extract");
       const result = await handleExtract(await readJson(req));
-      console.log(`← ${result.status} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+      const found = (result.body as { promises?: unknown[] }).promises;
+      console.log(
+        `← ${result.status} in ${((Date.now() - started) / 1000).toFixed(1)}s` +
+          (found ? ` (${found.length} promise${found.length === 1 ? "" : "s"})` : ""),
+      );
       return sendJson(res, result.status, result.body);
     }
     if (req.method === "GET" && req.url === "/") {
