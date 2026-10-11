@@ -44,4 +44,5 @@ data/
 
 # Firebase
 firebase-debug.log*
+firestore-debug.log*
 .firebase/
