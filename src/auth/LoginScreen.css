@@ -1,0 +1,13 @@
+/* Scoped to the login screen and loading state; nothing here touches App.css or styles.css. */
+.login { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
+.login-card { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+.login-form { display: flex; flex-direction: column; gap: 12px; }
+.login-form label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
+.login-form input { padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font: inherit; }
+.login-error { color: #b42318; font-size: 0.9rem; margin: 0; }
+.login-primary, .login-secondary { padding: 10px 14px; border-radius: 8px; border: 1px solid transparent; font: inherit; cursor: pointer; }
+.login-primary { background: #1f2937; color: #fff; }
+.login-secondary { background: transparent; border-color: #ccc; color: inherit; }
+.login-primary:disabled, .login-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+.login-link { background: none; border: none; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; }
+.auth-loading { text-align: center; margin-top: 30vh; }

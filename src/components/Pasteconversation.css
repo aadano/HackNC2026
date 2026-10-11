@@ -1,0 +1,9 @@
+.paste { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.paste textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font: inherit; resize: vertical; }
+.paste-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
+.paste-message { font-size: 0.9rem; margin: 0; }
+.review-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.review-list label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.review-text { display: flex; flex-direction: column; gap: 2px; }
+.review-text small { opacity: 0.7; }
+.review-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
