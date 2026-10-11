@@ -1,1 +1,94 @@
 :root { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #242735; background: #f7f8fc; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; } * { box-sizing: border-box; } body { min-width: 320px; min-height: 100vh; margin: 0; } button, select { font: inherit; } button:focus-visible, select:focus-visible { outline: 3px solid #929be0; outline-offset: 3px; }
+
+/* ---------- Buttons: one look across the app ----------
+   A plain <button> is the white "secondary" style. The selectors under "Primary" get the
+   filled navy style. :where() keeps the base rules at zero specificity, so any component
+   class (e.g. .login-link) can still override them. */
+:where(button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #d8dbe5;
+  border-radius: 10px;
+  background: #fff;
+  color: #242735;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.05s;
+}
+
+/* Plain selector (not :where) so it comes after the `button { font: inherit }` reset above. */
+button {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+:where(button:hover:not(:disabled)) {
+  border-color: #c4c8d6;
+  background: #f1f2f7;
+}
+
+:where(button:active:not(:disabled)) {
+  transform: translateY(1px);
+}
+
+:where(button:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Primary: the main action in each spot */
+.complete-button,
+.login-primary,
+.paste-actions button[type="submit"],
+.review-actions button:last-child {
+  border-color: #343b65;
+  background: #343b65;
+  color: #fff;
+  box-shadow: 0 1px 2px rgb(36 39 53 / 0.18);
+}
+
+.complete-button:hover:not(:disabled),
+.login-primary:hover:not(:disabled),
+.paste-actions button[type="submit"]:hover:not(:disabled),
+.review-actions button:last-child:hover:not(:disabled) {
+  border-color: #252b4e;
+  background: #252b4e;
+}
+
+/* Smaller, since it sits inside each promise card */
+.complete-button {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+}
+
+/* The file picker's button matches the secondary style */
+input[type="file"] {
+  color: #707584;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+input[type="file"]::file-selector-button {
+  min-height: 36px;
+  margin-right: 10px;
+  padding: 0 14px;
+  border: 1px solid #d8dbe5;
+  border-radius: 10px;
+  background: #fff;
+  color: #242735;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  border-color: #c4c8d6;
+  background: #f1f2f7;
+}

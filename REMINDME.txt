@@ -37,6 +37,9 @@ Pitch: texts the bot a screenshot/message -> it pulls out who promised what -> r
 [x] Bot replies "📌 <who> → <what> (due <when>)" / "✅ Done: ..."
 [x] Add GEMINI_API_KEY to .env, then: npm run test:extractor
 [ ] Tune the prompts in server/gemini.ts against more test cases
+[ ] Gemini temperature 0 (reverted for now): adding `temperature: 0` to the config in
+    generate() in server/gemini.ts made results identical run to run (plan tests 7/7 twice).
+    Turn it back on if the same conversation starts giving different promises.
 [ ] Try it live in a DM, then in a group
     Demo tip: say "...in 2 minutes" so a reminder fires during judging
 

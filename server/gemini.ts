@@ -103,8 +103,7 @@ async function generate<T>(systemInstruction: string, contents: Part[], schema: 
   const res = await ai.models.generateContent({
     model: GEMINI_MODEL,
     contents,
-    // temperature 0: the same conversation gives the same promises every time.
-    config: { systemInstruction, temperature: 0, responseMimeType: "application/json", responseJsonSchema: schema },
+    config: { systemInstruction, responseMimeType: "application/json", responseJsonSchema: schema },
   });
   if (!res.text) throw new Error("Gemini returned an empty response");
   return JSON.parse(res.text);

@@ -153,19 +153,6 @@ select {
   font-size: 0.85rem;
 }
 
-.complete-button {
-  padding: 9px 12px;
-  border: 0;
-  border-radius: 9px;
-  background: #343b65;
-  color: white;
-  cursor: pointer;
-}
-
-.complete-button:hover {
-  background: #252b4e;
-}
-
 .empty-state {
   padding: 28px 0;
   color: #707584;
