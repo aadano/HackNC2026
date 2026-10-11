@@ -20,15 +20,15 @@ People make casual commitments over text all the time-sending notes, sharing sli
 
 ## Tech Stack
 
-- **React** — frontend UI and reusable components
-- **TypeScript** — typed frontend and backend code
-- **Vite** — local frontend development server and build tool
-- **CSS** — page styling
-- **Google Gemini API (`@google/genai`)** — language-model-based promise extraction with structured JSON responses
-- **Node.js** — local API server runtime
-- **Firebase** — Firebase Authentication/Firestore client integration, Hosting, and Cloud Functions configuration
-- **Spectrum TypeScript SDK (`spectrum-ts`)** — iMessage bot integration
-- **Git and GitHub** — version control and team collaboration
+- **React** - frontend UI and reusable components
+- **TypeScript** - typed frontend and backend code
+- **Vite** - local frontend development server and build tool
+- **CSS** - page styling
+- **Google Gemini API (`@google/genai`)** - language-model-based promise extraction with structured JSON responses
+- **Node.js** - local API server runtime
+- **Firebase** - Firebase Authentication/Firestore client integration, Hosting, and Cloud Functions configuration
+- **Spectrum TypeScript SDK (`spectrum-ts`)** - iMessage bot integration
+- **Git and GitHub** - version control and team collaboration
 
 ## AI Tools and How We Used Them
 
@@ -42,7 +42,7 @@ Gemini is the generative AI model used by the application. The backend sends con
 The backend converts the accepted results into promise drafts. For chat-based tracking, the same Gemini logic can also identify promises completed by a recent message.
 
 ### Claude and ChatGPT
-Claude and ChatGPT were used as AI-assisted development tools to support the building process—for example, helping with boilerplate/scaffolding, brainstorming implementation approaches, explaining code, and troubleshooting errors. They supported development; **Gemini is the model integrated into the project's promise-extraction functionality**.
+Claude and ChatGPT were used as AI-assisted development tools to support the building process. For example, helping with boilerplate/scaffolding, brainstorming implementation approaches, explaining code, and troubleshooting errors. They supported development; **Gemini is the model integrated into the project's promise-extraction functionality**.
 
 ## Repository Structure
 
@@ -123,7 +123,7 @@ Do not commit `.env` or API keys to GitHub. For Firebase Functions deployment, c
 
 Open two terminal sessions from the repository root.
 
-**Terminal 1 — start the API server:**
+**Terminal 1 - start the API server:**
 
 ```bash
 npm run server
@@ -131,7 +131,7 @@ npm run server
 
 The API runs at `http://localhost:3001` and requires `GEMINI_API_KEY` in `.env`.
 
-**Terminal 2 — start the Vite frontend:**
+**Terminal 2 - start the Vite frontend:**
 
 ```bash
 npm run dev
