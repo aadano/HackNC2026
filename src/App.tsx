@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { TrackedPromise, PromiseStatus } from "./types/promise";
-import { SignIn } from "./components/SignIn";
-import { useAuthUser } from "./services/auth";
-import { completePromise as completeSavedPromise, watchPromises } from "./services/promises";
+import { SignOutButton } from "./auth/SignOutButton";
+import { useUserPromises } from "./hooks/useUserPromise";
+import { PasteConversation } from "./components/PasteConverstation";
 import "./App.css";
-
 
 // defines the values the filter is allowed to have.
 type Filter = "all" | PromiseStatus | "overdue";
@@ -19,20 +18,9 @@ function isOverdue(promise: TrackedPromise): boolean {
 }
 
 function App() {
-  //useState to allow React to remember information that can change while app runs.
-  const [promises, setPromises] = useState<TrackedPromise[]>([]); // emptylist initially
+  // Live, per-user data from Firestore. App only renders behind <AuthGate>, so a user always exists here.
+  const { promises, loaded, error, addPromises, setStatus } = useUserPromises();
   const [filter, setFilter] = useState<Filter>("all"); // initial selection
-  const { user, loading } = useAuthUser(); // signed-in Firebase user, or null
-
-  // Live list of the signed-in user's promises from Firestore; empty when signed out.
-  useEffect(() => {
-    if (!user) {
-      setPromises([]);
-      return;
-    }
-    return watchPromises(user.uid, setPromises);
-  }, [user]);
-
 
   // creates new array matching the selected filter only
   const visiblePromises = promises.filter((promise) => {
@@ -63,12 +51,10 @@ function App() {
     return 0;
   });
 
-  // Saves to Firestore; the live list above picks up the change.
+  // Saves to Firestore; the live listener in the hook updates the screen.
   function completePromise(id: string) {
-    if (!user) return;
-    completeSavedPromise(user.uid, id).catch(console.error);
+    setStatus(id, "completed");
   }
-
 
   return (
     <main className="app">
@@ -77,7 +63,7 @@ function App() {
           <p className="eyebrow">YOUR COMMITMENTS, IN ONE PLACE</p>
           <h1>Promise Tracker</h1>
           <p className="subtitle">Keep track of what people said they'd do.</p>
-          {!loading && <SignIn user={user} />}
+          <SignOutButton />
         </div>
       </header>
 
@@ -116,6 +102,8 @@ function App() {
           </label>
         </div>
 
+        {error && <p role="alert">{error}</p>}
+
         <div className="promise-list">
           {sortedPromises.map((promise) => (
             <article className="promise-card" key={promise.id}>
@@ -150,15 +138,15 @@ function App() {
             </article>
           ))}
 
-          {visiblePromises.length === 0 && (
+          {/* Only after the first Firestore response, so it doesn't flash while loading */}
+          {loaded && visiblePromises.length === 0 && (
             <p className="empty-state">
-              {user
-                ? "Nothing here yet. A little breathing room for your promises."
-                : "Sign in to see your promises."}
+              Nothing here yet. A little breathing room for your promises.
             </p>
           )}
         </div>
       </section>
+      <PasteConversation onSave={addPromises} />
     </main>
   );
 }

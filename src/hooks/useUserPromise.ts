@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../auth/AuthContext";
-import { savePromises, subscribePromises, updateStatus } from "../services/firestoreStorage.ts";
+import { savePromises, subscribePromises, updateStatus } from "../services/firestoreStorage";
 import type { PromiseDraft, PromiseStatus, TrackedPromise } from "../types/promise";
 
 // The one place App talks to the database. Must be used behind <AuthGate>.
@@ -11,6 +11,7 @@ export function useUserPromises() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // subscribePromises returns an unsubscribe function, which React calls on cleanup.
     return subscribePromises(
       user.uid,
       (list) => {
